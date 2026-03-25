@@ -1,33 +1,41 @@
 const express = require("express");
+const dotenv = require("dotenv");
 const morgan = require("morgan");
 const cors = require("cors");
 const helmet = require("helmet");
-require("dotenv").config();
+const path = require("path");
 
-const userRoutes = require("./routes/users");
-const postRoutes = require("./routes/posts");
-
-const errorHandler = require("./middleware/errorHandler");
-const formatResponse = require("./middleware/formatResponse");
+dotenv.config();
 
 const app = express();
 
-// Middleware
 app.use(express.json());
+app.use(morgan("dev"));
 app.use(cors());
 app.use(helmet());
-app.use(morgan("dev"));
-app.use(formatResponse);
 
-// Routes
-app.use("/users", userRoutes);
-app.use("/posts", postRoutes);
+app.use(require("./middleware/formatResponse"));
 
-// Docs route
-app.use(express.static("public"));
+app.use(express.static(path.join(__dirname, "public")));
 
-// Error handler
-app.use(errorHandler);
+app.get("/api-docs", (req, res) => {
+  res.sendFile(path.join(__dirname, "public", "docs.html"));
+});
+
+app.use("/api/users", require("./routes/users"));
+app.use("/api/posts", require("./routes/posts"));
+app.use("/api/comments", require("./routes/comments"));
+app.use("/api/likes", require("./routes/likes"));
+app.use("/api/followers", require("./routes/followers"));
+
+app.get("/", (req, res) => {
+  res.status(200).json({
+    success: true,
+    message: "Welcome to Social Media API"
+  });
+});
+
+app.use(require("./middleware/errorHandler"));
 
 const PORT = process.env.PORT || 3000;
 

@@ -1,59 +1,114 @@
-const { users } = require("../utils/mockData");
-const asyncHandler = require("../middleware/async");
 const ErrorResponse = require("../utils/errorResponse");
+const asyncHandler = require("../middleware/async");
+const { users } = require("../utils/mockData");
 
-// GET USERS
-exports.getUsers = asyncHandler(async (req, res) => {
-  res.formatResponse({
+// @desc    Get all users
+// @route   GET /api/users
+exports.getUsers = asyncHandler(async (req, res, next) => {
+  const page = parseInt(req.query.page, 10) || 1;
+  const limit = parseInt(req.query.limit, 10) || 10;
+  const startIndex = (page - 1) * limit;
+  const endIndex = page * limit;
+  const total = users.length;
+
+  const results = users.slice(startIndex, endIndex);
+
+  const pagination = {};
+  if (endIndex < total) {
+    pagination.next = { page: page + 1, limit };
+  }
+  if (startIndex > 0) {
+    pagination.prev = { page: page - 1, limit };
+  }
+
+  res.status(200).json({
     success: true,
-    count: users.length,
-    data: users
+    count: results.length,
+    page,
+    total_pages: Math.ceil(total / limit),
+    pagination,
+    data: results
   });
 });
 
-// GET SINGLE USER
+// @desc    Get single user
+// @route   GET /api/users/:id
 exports.getUser = asyncHandler(async (req, res, next) => {
-  const user = users.find(u => u.id == req.params.id);
+  const user = users.find(u => u.id === req.params.id);
 
-  if (!user) return next(new ErrorResponse("User not found", 404));
+  if (!user) {
+    return next(new ErrorResponse(`User not found with id ${req.params.id}`, 404));
+  }
 
-  res.formatResponse({ success: true, data: user });
+  res.status(200).json({
+    success: true,
+    data: user
+  });
 });
 
-// CREATE USER
-exports.createUser = asyncHandler(async (req, res) => {
+// @desc    Create user
+// @route   POST /api/users
+exports.createUser = asyncHandler(async (req, res, next) => {
   const newUser = {
-    id: users.length + 1,
-    ...req.body,
-    created_at: new Date()
+    id: (users.length + 1).toString(),
+    username: req.body.username,
+    email: req.body.email,
+    full_name: req.body.full_name,
+    profile_picture: req.body.profile_picture || "default-profile.jpg",
+    bio: req.body.bio,
+    created_at: new Date().toISOString().slice(0, 10)
   };
+
+  const existingUser = users.find(u => u.username === newUser.username);
+  if (existingUser) {
+    return next(new ErrorResponse("Username already exists", 400));
+  }
 
   users.push(newUser);
 
-  res.status(201).formatResponse({
+  res.status(201).json({
     success: true,
     data: newUser
   });
 });
 
-// UPDATE USER
+// @desc    Update user
+// @route   PUT /api/users/:id
 exports.updateUser = asyncHandler(async (req, res, next) => {
-  const user = users.find(u => u.id == req.params.id);
+  const user = users.find(u => u.id === req.params.id);
 
-  if (!user) return next(new ErrorResponse("User not found", 404));
+  if (!user) {
+    return next(new ErrorResponse(`User not found with id ${req.params.id}`, 404));
+  }
 
-  Object.assign(user, req.body);
+  const index = users.findIndex(u => u.id === req.params.id);
 
-  res.formatResponse({ success: true, data: user });
+  users[index] = {
+    ...user,
+    ...req.body,
+    id: user.id
+  };
+
+  res.status(200).json({
+    success: true,
+    data: users[index]
+  });
 });
 
-// DELETE USER
+// @desc    Delete user
+// @route   DELETE /api/users/:id
 exports.deleteUser = asyncHandler(async (req, res, next) => {
-  const index = users.findIndex(u => u.id == req.params.id);
+  const user = users.find(u => u.id === req.params.id);
 
-  if (index === -1) return next(new ErrorResponse("User not found", 404));
+  if (!user) {
+    return next(new ErrorResponse(`User not found with id ${req.params.id}`, 404));
+  }
 
+  const index = users.findIndex(u => u.id === req.params.id);
   users.splice(index, 1);
 
-  res.formatResponse({ success: true, message: "User deleted" });
+  res.status(200).json({
+    success: true,
+    data: {}
+  });
 });
