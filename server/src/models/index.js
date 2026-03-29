@@ -1,4 +1,3 @@
-// In-memory data store for development
 const dataStore = {
   videos: [],
   users: [],
@@ -10,10 +9,7 @@ const dataStore = {
   }
 };
 
-// Create some initial data if in development
 if (process.env.NODE_ENV === 'development') {
-
-  // Users
   dataStore.users.push({
     id: dataStore.nextIds.users++,
     username: 'user1',
@@ -34,7 +30,6 @@ if (process.env.NODE_ENV === 'development') {
     createdAt: new Date().toISOString()
   });
 
-  // Videos
   dataStore.videos.push({
     id: dataStore.nextIds.videos++,
     title: 'First Video',
@@ -55,7 +50,6 @@ if (process.env.NODE_ENV === 'development') {
     createdAt: new Date().toISOString()
   });
 
-  // Comments
   dataStore.comments.push({
     id: dataStore.nextIds.comments++,
     text: 'Great video!',
