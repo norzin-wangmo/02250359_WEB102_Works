@@ -1,0 +1,57 @@
+#%RAML 1.0
+title: Book Library API
+version: v1
+baseUri: http://localhost:3000
+mediaType: application/json
+
+types:
+  Book:
+    properties:
+      id: integer
+      title: string
+      author: string
+
+/books:
+  get:
+    description: Get all books
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              [
+                { "id": 1, "title": "Book One", "author": "Author A" },
+                { "id": 2, "title": "Book Two", "author": "Author B" }
+              ]
+
+  post:
+    description: Add a new book
+    body:
+      application/json:
+        example:
+          { "title": "New Book", "author": "Author C" }
+    responses:
+      201:
+        body:
+          application/json:
+            example:
+              { "id": 3, "title": "New Book", "author": "Author C" }
+
+/books/{id}:
+  get:
+    description: Get a book by ID
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              { "id": 1, "title": "Book One", "author": "Author A" }
+
+  delete:
+    description: Delete a book
+    responses:
+      200:
+        body:
+          application/json:
+            example:
+              { "message": "Book deleted" }
