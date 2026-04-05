@@ -1,11 +1,11 @@
 const formatResponse = (req, res, next) => {
-  const originalJson = res.json;
+  const originalJson = res.json.bind(res);
 
   const convertToXML = (data, rootName = "response") => {
     let xml = `<${rootName}>`;
 
     if (Array.isArray(data)) {
-      data.forEach(item => {
+      data.forEach((item) => {
         xml += convertToXML(item, "item");
       });
     } else if (typeof data === "object" && data !== null) {
@@ -21,16 +21,17 @@ const formatResponse = (req, res, next) => {
   };
 
   res.json = function (obj) {
-    const acceptHeader = req.headers.accept || "";
+    const wantsXml =
+      req.query.format === "xml" ||
+      req.headers["x-response-format"] === "xml";
 
-    if (acceptHeader.includes("application/xml")) {
+    if (wantsXml) {
       const xml = `<?xml version="1.0" encoding="UTF-8"?>${convertToXML(obj)}`;
       res.set("Content-Type", "application/xml");
       return res.send(xml);
     }
 
-    res.set("Content-Type", "application/json");
-    return originalJson.call(this, obj);
+    return originalJson(obj);
   };
 
   next();

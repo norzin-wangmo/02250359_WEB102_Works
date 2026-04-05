@@ -29,10 +29,10 @@ app.use("/api/likes", require("./routes/likes"));
 app.use("/api/followers", require("./routes/followers"));
 
 app.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Welcome to Social Media API"
-  });
+  res.send(`
+    <h1>Social Media API is Running</h1>
+    <p>Open <a href="/api-docs">/api-docs</a> to view the documentation.</p>
+  `);
 });
 
 app.use(require("./middleware/errorHandler"));

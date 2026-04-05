@@ -1,11 +1,15 @@
 const express = require("express");
+const {
+  getLikes,
+  getLike,
+  createLike,
+  updateLike,
+  deleteLike,
+} = require("../controllers/likeController");
+
 const router = express.Router();
 
-router.get("/", (req, res) => {
-  res.status(200).json({
-    success: true,
-    message: "Likes route working"
-  });
-});
+router.route("/").get(getLikes).post(createLike);
+router.route("/:id").get(getLike).put(updateLike).delete(deleteLike);
 
 module.exports = router;
