@@ -1,0 +1,30 @@
+{
+  "name": "02250359-web102-tiktok-api",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Web 102 — TikTok clone API (cursor pagination, auth, uploads)",
+  "type": "module",
+  "scripts": {
+    "dev": "node --watch src/index.js",
+    "start": "node src/index.js",
+    "db:push": "prisma db push",
+    "db:generate": "prisma generate",
+    "migrate:supabase": "node scripts/migrateVideosToSupabase.js",
+    "setup:supabase-buckets": "node scripts/createSupabaseBuckets.js",
+    "web:dev": "npm run dev --prefix web",
+    "web:build": "npm run build --prefix web"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.0",
+    "@supabase/supabase-js": "^2.105.4",
+    "bcryptjs": "^3.0.2",
+    "cors": "^2.8.5",
+    "dotenv": "^16.6.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "multer": "^2.0.2"
+  },
+  "devDependencies": {
+    "prisma": "^6.19.0"
+  }
+}
