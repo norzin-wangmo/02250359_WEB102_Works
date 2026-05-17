@@ -64,7 +64,12 @@ export async function getAllVideos(req, res) {
     items = await attachLikedByMe(viewerId, items);
     const nextCursor = hasNextPage ? items[items.length - 1].id : null;
 
-    res.json({ videos: items, nextCursor, hasNextPage });
+    res.json({
+      videos: items,
+      nextCursor,
+      hasNextPage,
+      pagination: { nextCursor, hasNextPage },
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message || "Failed to load videos" });
@@ -87,7 +92,12 @@ export async function getFollowingVideos(req, res) {
     const followingIds = follows.map((f) => f.followingId);
 
     if (followingIds.length === 0) {
-      return res.json({ videos: [], nextCursor: null, hasNextPage: false });
+      return res.json({
+        videos: [],
+        nextCursor: null,
+        hasNextPage: false,
+        pagination: { nextCursor: null, hasNextPage: false },
+      });
     }
 
     const take = limit + 1;
@@ -105,7 +115,12 @@ export async function getFollowingVideos(req, res) {
     items = await attachLikedByMe(userId, items);
     const nextCursor = hasNextPage ? items[items.length - 1].id : null;
 
-    res.json({ videos: items, nextCursor, hasNextPage });
+    res.json({
+      videos: items,
+      nextCursor,
+      hasNextPage,
+      pagination: { nextCursor, hasNextPage },
+    });
   } catch (err) {
     console.error(err);
     res.status(500).json({ message: err.message || "Failed to load following feed" });

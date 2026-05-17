@@ -14,13 +14,13 @@ app.get("/api/videos", (req, res) => {
   res.json([
     {
       id: 1,
-      caption: "Big Buck Bunny test video",
-      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/BigBuckBunny.mp4",
+      caption: "Working flower video",
+      url: "https://interactive-examples.mdn.mozilla.net/media/cc0-videos/flower.mp4",
     },
     {
       id: 2,
-      caption: "Elephants Dream test video",
-      url: "https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ElephantsDream.mp4",
+      caption: "Working sample video",
+      url: "https://filesamples.com/samples/video/mp4/sample_640x360.mp4",
     },
   ]);
 });
