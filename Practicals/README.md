@@ -12,6 +12,7 @@ This folder contains all practical session work for the module. Each practical h
 | 3 | [Practical_3_File_Upload](./Practical_3/) | Full-stack file upload (Express + Next.js) |
 | 4 | [Practical_4_Database_Prisma](./Practical_4/) | TikTok API with PostgreSQL + Prisma |
 | 5 | [Practical_5_Cloud_Storage](./Practical_5/) | Supabase cloud storage integration |
+| 6 | [Practical_6_JWT_Auth](./Practical_6/) | Token-based authentication (JWT, bcrypt) |
 
 ## How to use this repository
 
