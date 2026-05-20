@@ -1,4 +1,5 @@
 import supabase from "@/lib/supabase";
+import { apiFetch } from "@/lib/api";
 
 const VIDEO_BUCKET = "videos";
 const THUMB_BUCKET = "thumbnails";
@@ -34,4 +35,16 @@ export async function uploadVideoAndThumbnail({ videoFile, thumbnailFile, userId
   }
 
   return { video, thumbnail };
+}
+
+/**
+ * Upload via API (service role on server). Use when browser Supabase keys are missing or wrong.
+ */
+export async function uploadViaApi({ videoFile, thumbnailFile, caption, description }) {
+  const form = new FormData();
+  form.append("videoFile", videoFile);
+  if (thumbnailFile) form.append("thumbnail", thumbnailFile);
+  form.append("caption", caption);
+  if (description) form.append("description", description);
+  return apiFetch("/api/videos", { method: "POST", body: form });
 }

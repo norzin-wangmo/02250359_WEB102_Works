@@ -32,7 +32,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 app.get('/', (req, res) => {
   res.json({
-    message: 'Backend is running',
+    message: 'Welcome to TikTok API with PostgreSQL + Prisma',
     api: '/api'
   });
 });

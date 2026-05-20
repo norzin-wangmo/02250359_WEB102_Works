@@ -4,7 +4,8 @@ import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { apiFetch, getToken } from "@/lib/api";
-import { uploadVideoAndThumbnail } from "@/services/uploadService";
+import supabase from "@/lib/supabase";
+import { uploadVideoAndThumbnail, uploadViaApi } from "@/services/uploadService";
 
 export default function UploadPage() {
   const router = useRouter();
@@ -33,24 +34,42 @@ export default function UploadPage() {
 
     setBusy(true);
     try {
-      const me = await apiFetch("/api/users/me");
-      const { video, thumbnail } = await uploadVideoAndThumbnail({
-        videoFile,
-        thumbnailFile: thumbFile || null,
-        userId: me.id,
-      });
+      let uploaded = false;
 
-      await apiFetch("/api/videos", {
-        method: "POST",
-        body: JSON.stringify({
+      if (supabase) {
+        try {
+          const me = await apiFetch("/api/users/me");
+          const { video, thumbnail } = await uploadVideoAndThumbnail({
+            videoFile,
+            thumbnailFile: thumbFile || null,
+            userId: me.id,
+          });
+
+          await apiFetch("/api/videos", {
+            method: "POST",
+            body: JSON.stringify({
+              caption: caption.trim(),
+              description: description.trim() || undefined,
+              videoUrl: video.publicUrl,
+              videoStoragePath: video.storagePath,
+              thumbnailUrl: thumbnail?.publicUrl,
+              thumbnailStoragePath: thumbnail?.storagePath,
+            }),
+          });
+          uploaded = true;
+        } catch (directErr) {
+          console.warn("Direct Supabase upload failed, using API upload:", directErr);
+        }
+      }
+
+      if (!uploaded) {
+        await uploadViaApi({
+          videoFile,
+          thumbnailFile: thumbFile || null,
           caption: caption.trim(),
           description: description.trim() || undefined,
-          videoUrl: video.publicUrl,
-          videoStoragePath: video.storagePath,
-          thumbnailUrl: thumbnail?.publicUrl,
-          thumbnailStoragePath: thumbnail?.storagePath,
-        }),
-      });
+        });
+      }
 
       router.push("/");
       router.refresh();

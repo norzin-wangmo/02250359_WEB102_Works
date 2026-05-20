@@ -23,8 +23,13 @@ export async function apiFetch(path, options = {}) {
   const token = getToken();
   const headers = { ...(options.headers || {}) };
   if (token) headers.Authorization = `Bearer ${token}`;
+  const isFormData =
+    typeof FormData !== "undefined" && options.body instanceof FormData;
   if (options.body && typeof options.body === "string") {
     headers["Content-Type"] = "application/json";
+  } else if (isFormData) {
+    // Let the browser set multipart boundary
+    delete headers["Content-Type"];
   }
   const res = await fetch(`${base}${path}`, { ...options, headers });
   const text = await res.text();

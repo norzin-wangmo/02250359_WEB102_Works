@@ -53,7 +53,7 @@ npm install
 Create `server/.env`:
 
 ```env
-PORT=5000
+PORT=5001
 NODE_ENV=development
 DATABASE_URL="postgresql://postgres:password@localhost:5432/tiktok_db?schema=public"
 JWT_SECRET=your_secret_key
@@ -73,12 +73,12 @@ npm run seed
 npm run dev
 ```
 
-API base: http://localhost:5000
+API base: http://localhost:5001
 
 Welcome endpoint:
 
 ```bash
-GET http://localhost:5000/
+GET http://localhost:5001/
 ```
 
 Response:
@@ -163,7 +163,7 @@ Relations use `@relation`, `onDelete: Cascade`, and `@@unique` for like/follow p
 
 ### Example: create video (protected)
 
-`POST http://localhost:5000/api/videos`
+`POST http://localhost:5001/api/videos`
 
 Headers: `Authorization: Bearer <token>`
 
